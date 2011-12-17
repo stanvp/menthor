@@ -1,4 +1,4 @@
-package processing.parallel
+package menthor.processing
 
 import org.scalatest.FunSuite
 

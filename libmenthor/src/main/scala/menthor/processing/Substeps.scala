@@ -1,4 +1,4 @@
-package processing.parallel
+package menthor.processing
 
 // each Substep has a substep function and a reference to the previous Substep
 class Substep[Data](val stepfun: () => List[Message[Data]], val previous: Substep[Data]) {

@@ -4,7 +4,7 @@ import Keys._
 object BuildSettings {
   val buildOrganization = "epfl"
   val buildVersion = "0.1"
-  val buildScalaVersion = "2.9.0-1"
+  val buildScalaVersion = "2.9.1"
 
   val buildSettings = Defaults.defaultSettings ++ Seq (
     organization := buildOrganization,
@@ -25,7 +25,7 @@ object Dependencies {
 
   val akkaactor = "se.scalablesolutions.akka" % "akka-actor" % akkaVer
   val akkaremote = "se.scalablesolutions.akka" % "akka-remote" % akkaVer
-  val scalatest = "org.scalatest" % "scalatest_2.9.0" % "1.6.1" % "test"
+  val scalatest = "org.scalatest" %% "scalatest" % "1.6.1" % "test"
 }
 
 object MenthorBuild extends Build {

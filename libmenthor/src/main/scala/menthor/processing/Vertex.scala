@@ -1,4 +1,4 @@
-package processing.parallel
+package menthor.processing
 
 import scala.actors.Actor
 
@@ -19,11 +19,11 @@ abstract class Vertex[Data](val label: String, initialValue: Data) {
   var superstep: Int = 0
   var incoming: List[Message[Data]] = List()
 
-  private[parallel] var currentStep: Substep[Data] =
+  private[processing] var currentStep: Substep[Data] =
     // construct pipeline of substeps
     update().firstSubstep
 
-  private[parallel] def moveToNextStep() {
+  private[processing] def moveToNextStep() {
     currentStep =
       if (currentStep.next == null) currentStep.firstSubstep
       else currentStep.next
@@ -33,7 +33,7 @@ abstract class Vertex[Data](val label: String, initialValue: Data) {
   // assume !substep.isInstanceOf[CrunchStep[Data]]
   // (checked in Worker.superstep)
 /*
-  private[parallel] def executeNextStep(): Option[List[Message[Data]]] = {
+  private[processing] def executeNextStep(): Option[List[Message[Data]]] = {
     //println("#substeps = " + substeps.size)
     //val substep = substeps((step - 1) % substeps.size)
     val substep = currentStep

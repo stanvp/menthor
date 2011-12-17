@@ -1,4 +1,4 @@
-package processing.parallel
+package menthor.processing
 
 import scala.collection.mutable.{Map, HashMap}
 import scala.collection.mutable.ListBuffer
