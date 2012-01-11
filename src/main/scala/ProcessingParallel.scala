@@ -72,40 +72,40 @@ class Graph[Data] extends Actor {
   }
 
   def createWorkers() {
-//    val numChildren = 4
-//    val numWorkers = 48
-//
-//    val topLevel = (for (i <- 1 to 3) yield {
-//      val f = new Foreman(this, List())
-//      workers = f :: workers
-//      f
-//    }).toList
-//
-//    val listOfMidLevels = for (foreman <- topLevel) yield {
-//      val midLevel: List[Foreman] =
-//        (for (i <- 1 to numChildren) yield new Foreman(foreman, List())).toList
-//      foreman.children = midLevel
-//      midLevel
-//    }
-//
-//    val midLevel = listOfMidLevels.flatten
-//    allForemen = topLevel ::: midLevel
-//
-//    // partition set of vertices into numWorkers partitions
-//    val sizeOfMostPartitions = (vertices.size.toDouble / numWorkers.toDouble).floor.toInt
-//    val tooManyPartitions = vertices.grouped(sizeOfMostPartitions).toList
-//    var additionalPartitions = tooManyPartitions.drop(numWorkers)
-//    val actualPartitions = tooManyPartitions.take(numWorkers)
-//
-//    val partitions = for (part <- actualPartitions) yield {
-//      if (additionalPartitions.isEmpty)
-//        part
-//      else {
-//        val additionalPart = additionalPartitions.head
-//        additionalPartitions = additionalPartitions.tail
-//        part ::: additionalPart
-//      }
-//    }
+    val numChildren = 2
+    val numWorkers = 8
+
+    val topLevel = (for (i <- 1 to 2) yield {
+      val f = new Foreman(this, List())
+      workers = f :: workers
+      f
+    }).toList
+
+    val listOfMidLevels = for (foreman <- topLevel) yield {
+      val midLevel: List[Foreman] =
+        (for (i <- 1 to numChildren) yield new Foreman(foreman, List())).toList
+      foreman.children = midLevel
+      midLevel
+    }
+
+    val midLevel = listOfMidLevels.flatten
+    allForemen = topLevel ::: midLevel
+
+    // partition set of vertices into numWorkers partitions
+    val sizeOfMostPartitions = (vertices.size.toDouble / numWorkers.toDouble).floor.toInt
+    val tooManyPartitions = vertices.grouped(sizeOfMostPartitions).toList
+    var additionalPartitions = tooManyPartitions.drop(numWorkers)
+    val actualPartitions = tooManyPartitions.take(numWorkers)
+
+    val partitions = for (part <- actualPartitions) yield {
+      if (additionalPartitions.isEmpty)
+        part
+      else {
+        val additionalPart = additionalPartitions.head
+        additionalPartitions = additionalPartitions.tail
+        part ::: additionalPart
+      }
+    }
 
 /*
     val partitionSize = {
@@ -117,35 +117,21 @@ class Graph[Data] extends Actor {
 */
     //println("#partitions: " + partitions.size)
 
-//    var partition: List[Vertex[Data]] = List()
-//    for (i <- 0 until 12; j <- 0 until 4) {
-//      partition = partitions(i * 4 + j)
-//      val worker = new Worker(midLevel(i), partition, this)
-//      midLevel(i).children = worker :: midLevel(i).children
-//      allForemen ::= worker
-//
-//      for (vertex <- partition) {
-//        vertex.worker = worker
-//      }
-//      worker.start()
-//    }
-//
-//    for (f <- midLevel) { f.start() }
-//    for (f <- topLevel) { f.start() }
-      val numProcs = Runtime.getRuntime().availableProcessors()
-      val graphSize = vertices.size
-      
-      val partitionSize: Int = if (graphSize % numProcs == 0) { graphSize / numProcs } else { (graphSize / numProcs) + 1 }
-      val partitions = vertices.grouped(partitionSize)
-      println("Creating workers per partitions. Partition size = " + partitionSize)
+    var partition: List[Vertex[Data]] = List()
+    for (i <- 0 until (numWorkers / numChildren); j <- 0 until numChildren) {
+      partition = partitions(i * numChildren + j)
+      val worker = new Worker(midLevel(i), partition, this)
+      midLevel(i).children = worker :: midLevel(i).children
+      allForemen ::= worker
 
-      for (partition <- partitions) {
-        val worker = new Worker(self, partition, this)
-        workers ::= worker
-        for (v <- partition)
-          v.worker = worker
-        worker.start()
-      }    
+      for (vertex <- partition) {
+        vertex.worker = worker
+      }
+      worker.start()
+    }
+
+    for (f <- midLevel) { f.start() }
+    for (f <- topLevel) { f.start() }
   }
 
   def act() {
