@@ -104,7 +104,7 @@ abstract class Vertex[Data](val label: String, initialValue: Data) {
   def connectTo(v: Vertex[Data]) {
     neighbors = v :: neighbors
   }
-  
+
   def initialize() { }
 
   def update(superstep: Int, incoming: List[Message[Data]]): Substep[Data]
@@ -129,6 +129,8 @@ class Graph[Data] extends actor.Actor {
   var vertices: List[Vertex[Data]] = List()
   var workers: List[ActorRef] = List()
   var allForemen: List[ActorRef] = List()
+
+  var singleVertexGraph = false
 
   var cond: () => Boolean = () => false
 
@@ -306,7 +308,7 @@ class Graph[Data] extends actor.Actor {
             crunchResult = Some(workerResults.reduceLeft(cruncher.get))
             nextIter()
           }
-          
+
         case "Done" =>
           numRecv += 1
           numDone += 1
